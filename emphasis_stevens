@@ -1,0 +1,135 @@
+#!/usr/bin/env python
+  2
+  3  """Perceptual loudness measurement.
+  4  This is an implementation of
+  5  "Percieved Level of Noise by Mark VII and Decibels (E)"
+  6  S. S. Stevens,
+  7  J. Acoustical Soc. Am. v. 51(2, part 2) 1972
+  8  pages 575-602.
+  9
+ 10  The algorithm matches the paper for FractOct==ThirdOct or OneOct.
+ 11  The algorithm assumes that the level defined by SIXTY_EIGHT
+ 12  corresponds to 68dB relative to 20 micro-Newtons per square meter
+ 13  sound pressure.
+ 14
+ 15  USER INFORMATION:
+ 16
+ 17  You'll find, somewhere, a subdirectory named
+ 18  speechresearch/voicing .
+ 19  Within this is a script called emphasis_stevens.py .
+ 20  This can be run as
+ 21  python emphasis_stevens.py -o outputfile -write BITPIX=0 -c channelnumber inputfile
+ 22  (there are a couple of other flags, too).
+ 23
+ 24  It will then read the input file (which is an audio recording)
+ 25  and produce a time-series of the loudness.   Data input and
+ 26  output is via the gpkio library, in .../speechresearch/gpkio.
+ 27  That library has many virtues, but reading WAV files is not
+ 28  one of them, so you have to convert .wav files to
+ 29  the "GPK ASCII image" format (or one of several other formats),
+ 30  using  .../speechresearch/lib/wavio.py .
+ 31
+ 32  The output will be in an ASCII version of the format,
+ 33  which should be reasonably intelligible.    (The GPK ASCII image
+ 34  format is based on the FITS astronomy format from NASA.)
+ 35
+ 36  However, that script uses the gpkio and gpklib libraries
+ 37  (also under ../speechresearch).  These need to be compiled,
+ 38  and it uses the gpk_img_python package that needs to be
+ 39  installed via   "python setup.py install".
+ 40  Oh, and .../speechresearch/gmisclib needs to be in
+ 41  your PYTHONPATH.
+ 42
+ 43  Give it a try, and I'll be happy to help, and will
+ 44  incorporate the troubles you have into some form of
+ 45  documentation.    Sorry, I have nothing better yet.
+ 46  """
+ 47
+ 48  import math
+ 49  import numpy
+ 50  from gmisclib import Numeric_gpk
+ 51  from gmisclib import die
+ 52  from gmisclib import gpkmisc
+ 53
+ 54  from gpk_voicing import voice_misc
+ 55
+ 56
+ 57
+ 58  FAC = 0.5
+ 59  ThirdOct = 2.0**(1.0/3.0)
+ 60  OneOct = 2.0
+ 61  FracOct = 2.0**0.7
+ 62  Fmax = 12500.0
+ 63  Fmin = 50.0
+ 64  EXFAC = 2
+ 65  E = 0.3333
+ 66
+ 67  # 1.0 would cheat on the low frequency end a little.
+ 68  TAUFAC = 1.2
+ 69
+ 70
+ 71  SIXTY_EIGHT = 6000.0
+ 72  E = 0.3333
+ 73
+ 74
+ 75
+ 76 +class extra_c:
+         ...
+120
+121  Fullband = extra_c(Fmin, Fmax, FracOct, FAC) 
+  Speechband = extra_c(300.0, 4000.0, FracOct, FAC)
+
+ -def filter_fcn(f, fc, w):
+          Exp = 6 # 18 dB/octave
+          return 1.0/(((f-fc)/w)**Exp + 1)
+
+
+  _ff_cache = {}
+ +def cached_filter_fcn(f, fc, w):
+         ...
+
+
+
+
+ -def one_loud(d, extra):
+          """Approximate loudness of the sound in data array d.
+          Extra contains misc. parameters."""
+
+          n = d.shape[0]
+          dt = extra.dt
+          assert d.shape == (n,)
+          ss = numpy.fft.fft(Numeric_gpk.zero_pad_end(d*voice_misc.window(n, 0), EXFAC-1))
+          ss[0] = 0       # Remove DC offset.
+          # print "# ss.shape=", ss.shape
+          f = numpy.absolute(voice_misc.fft_freq(ss.shape[0], d=dt))
+          # assert abs(gpkmisc.N_maximum(f)-0.5/dt) < 0.05/dt
+          nyquist = 0.5/dt
+          q = numpy.zeros((extra.n,))
+          for i in range( extra.n ):
+                  fc = extra.Band_ctr[i]
+                  w = extra.Band_h_width[i]
+                  if fc+w > nyquist:
+                          break
+                  q[i] = numpy.square(numpy.absolute(ss * cached_filter_fcn(f, fc, w))).sum()
+          S = extra.Ear * (q**E)
+          Smax = S[S.argmax()]
+          Ssum = S.sum()/extra.ffac
+          loud = Smax + extra.Fsum*(Ssum - Smax)
+          return loud
+
+
+ -def printit(title, vec):
+          vt = ' '.join(["%6g"%q for q in vec])
+          print title, vt
+
+
+ +def emphasis(data, extra, DT=0.01):
+         ...
+
+
+ +def simple_emphasis(data, dt, DT=0.01, extra=Fullband):
+         ...
+
+
+ -def speechband_loudness(data, dt, DT=0.01):
+          return simple_emphasis(data, dt, DT, extra=Speechband)
