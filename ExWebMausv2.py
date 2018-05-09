@@ -1,17 +1,17 @@
 #!/usr/bin/python
-import os
 from scipy.io import wavfile
 import requests
 import csv
 import urllib
+import defs
 from BeautifulSoup import BeautifulSoup
 import sys
 
 i = 0
 
-for filename in os.listdir('/home/ubuntu/Documents/PF/lab3/data/train/'):
-    print i
-    filepath = '/home/ubuntu/Documents/PF/lab3/data/train/' + filename
+for filename in os.listdir(DATA_FOLDER + 'train/'):
+    print(i)
+    filepath = DATA_FOLDER + 'train/' + filename
     fileProperties = {
         'OUTFORMAT': (None, 'csv'),
         'PRESEG': (None, 'false'),

@@ -2,6 +2,7 @@
 
 from scipy.io import wavfile
 import scipy.stats
+import defs
 import csv
 import sys
 import re
@@ -23,7 +24,7 @@ nI = nE = na = nO = nU = nY = n_9  = narr = n_6 = 0
 n_i = n_e = nE_ = na_ = no = nu = ny = n_2 = 0
 aux = 0
 
-audio = '/home/ubuntu/Documents/PF/lab3/data/dev/' + sys.argv[1][:-4] + '.wav'
+audio = DATA_FOLDER + 'dev/' + sys.argv[1][:-4] + '.wav'
 fs, data = wavfile.read(audio)
 
 with open(filename, 'r') as file:

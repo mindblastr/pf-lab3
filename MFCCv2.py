@@ -6,6 +6,7 @@ import csv
 import sys
 import os
 import re
+import defs
 from python_speech_features import mfcc
 import numpy as np
 
@@ -62,24 +63,22 @@ vowels = {
 
 count = 0
 folder = 'test/'
-for filename in os.listdir('/home/ubuntu/Documents/PF/lab3/Development/' + folder):
-
-    print count
+for filename in os.listdir(SRC_FOLDER + folder):
     count = count + 1
 
-    newfile = open('/home/ubuntu/Documents/PF/lab3/Development/' + 'MFCC/' + folder + filename[:-4] + '_v_mfcc.csv', 'w')
+    newfile = open(SRC_FOLDER + 'MFCC/' + folder + filename[:-4] + '_v_mfcc.csv', 'w')
 
-    with open('/home/ubuntu/Documents/PF/lab3/Development/' + folder + filename, 'r') as file:
+    with open(SRC_FOLDER+ folder + filename, 'r') as file:
         filedata = file.read()
         filedata = re.sub(';', ',', filedata)
 
-    with open('/home/ubuntu/Documents/PF/lab3/Development/' + folder + filename, 'w') as file:
+    with open(SRC_FOLDER + folder + filename, 'w') as file:
         file.write(filedata)
 
-    audio = '/home/ubuntu/Documents/PF/lab3/data/'+ folder + filename[:-4] + '.wav'
+    audio = DATA_FOLDER + folder + filename[:-4] + '.wav'
     fs, data = wavfile.read(audio)
 
-    with open('/home/ubuntu/Documents/PF/lab3/Development/' + folder + filename, 'r') as file:
+    with open(SRC_FOLDER + folder + filename, 'r') as file:
 
         reader = csv.DictReader(file)
 
