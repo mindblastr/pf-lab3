@@ -24,7 +24,9 @@ interesting to see, since breathy voices are related to colds.
 We would include different features, or more if we had more time to dwelve into different tools to apply to a signal (such as
 VTLN or IIF).
 
-We did not normalize any features.
+Our array of data for each file had 13 values per vowel, and since some vowels had no data associated (represented with a -1)
+we chose to zero-fill these values, thus we were forced to not normalize any features in order to avoid providing the neural network with 
+wrong assumptions.
 
 We provide 2 sets of results, one with only MFCC applied to vowels and another with MFCC and HNR. 
 We did not change the arquitecture of the baseline due to lack of time. 
