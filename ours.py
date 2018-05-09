@@ -80,9 +80,7 @@ def build_model(input_shape, learning_rate=0.01):
     # Fully Connected or Dense Layer receives as input the number of hidden units
     model.add(Dense(20, input_shape=(input_shape[1],))) 
     model.add(BatchNormalization()) 
-     
-     
-
+    
     # The first layer in the model it needs to receive the input shape
     # For feature vectors the input shape can be defined as (number_of_features,)
     # The empty slot after number_of_features denotes that the size of the batch will be defined later    
@@ -215,7 +213,6 @@ def main():
     
     # Set file tuples
     train_files = ('MFCC/train_converted.csv', 'labels_train.txt')
-    #train_files = ('features_MFCC_train.csv', 'labels_train.txt')
     dev_files = ('MFCC/dev_converted.csv', 'labels_dev.txt')
     
     ## Load Data using Parsers
@@ -231,8 +228,8 @@ def main():
     dev_labels = parse_labels(dev_files[1])
     
     # Set Training Parameters
-    learning_rate = 0.01
-    epochs = 10
+    learning_rate =  0.0205
+    epochs = 50
     batch_size = 1000
     
     # Train Model
