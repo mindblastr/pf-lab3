@@ -106,12 +106,7 @@ for filename in os.listdir('/home/ubuntu/Documents/PF/lab3/Development/' + folde
         a = a + 1
         store = vowels[key].divide()
 
-        newfile.write(key + ',')
-
-        if(isinstance(store, np.ndarray)):
-            np.savetxt(newfile, store, fmt='%.5f', newline=',')
-        else:
-            newfile.write('-1')
+        newfile.write(key + ',%.5f', store )
 
         newfile.write('\n')
 
