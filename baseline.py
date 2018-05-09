@@ -222,7 +222,7 @@ def main():
     
     # Set Training Parameters
     learning_rate = 0.0205
-    epochs = 10
+    epochs = 50
     batch_size = 1000
     
     # Train Model
