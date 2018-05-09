@@ -55,3 +55,5 @@ openSmile feature extraction was also a big objection for us to use the tool.
 
 There could also be room for improvement (especially regarding the SVM) if we had time to develop a DNN for feature selection
 (in order to determine which features are more relevant for the classificaion). 
+
+##WARNING: If you would like to execute any of the code we provide, there might be some problems regarding directories##
