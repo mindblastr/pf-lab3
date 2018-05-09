@@ -1,0 +1,55 @@
+We decided to simply improve the baseline provided. In the midst of research we discovered that MFCC features is one of the 
+most used for these kind of tasks. In adition to MFCC we also introduced HNR as a feature. 
+
+Since the baseline applies feature extraction on the whole file, we decided to improve on that and apply feature extraction
+only on vowels, in order to try and provide better results. 
+
+We discovered this tool : https://clarin.phonetik.uni-muenchen.de/BASWebServices/interface/WebMINNI that allowed us to
+automaticaly phonetically transcribe the files. The tool is not 100% accurate, and less so if we can't provide a txt file with 
+the transcription, but we decided to take a risk, since we would mitigate any errors in single classification by averaging the
+feature extracted over others of the same occorrence of the vowel in question. 
+
+We used the vowels provided by this website: http://www.phon.ucl.ac.uk/home/sampa/german.htm . A total of 16 vowels.
+(i: e: E: a: o: u: y: 2: I E a O U Y 9: @)
+
+This paper: https://pdfs.semanticscholar.org/e455/06c70dfc3659fa5f09b2af650be9140d1be9.pdf provided some inspiration for what
+we did, though we did not follow the occurrences of the phonemes that supposedely had more success. 
+
+The decision to include HNR in one of our networks as a feature was derived from a set of papers that aluded that HNR could be 
+a predictor for breathy voices (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4937833/#R27 ;
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3984008/), and it does make sense since the cause of breathyness in a voice is a
+more laxed and oppened glotis, that would induce more non-harmonic signals (noise). Applying this to vowel sounds could be 
+interesting to see, since breathy voices are related to colds. 
+
+We would include different features, or more if we had more time to dwelve into different tools to apply to a signal (such as
+VTLN or IIF).
+
+We did not normalize any features.
+
+We provide 2 sets of results, one with only MFCC applied to vowels and another with MFCC and HNR. 
+We did not change the arquitecture of the baseline due to lack of time. 
+On the one with only MFCC we have an UAR of 67% and with MFCC + HNR we have an UAR of 65.2% versus an UAR of 60.8% 
+from the baseline over the course of 50 epochs.
+
+We also did some investigation (https://pdfs.semanticscholar.org/4e6b/f5b7491b9cc02cd338f0879a2d4a6bc86d77.pdf) into others
+people involved in the same competition and they present an UAR of 65.8% as best result (versos 65.2% from their baseline) on
+the Dev set. 
+
+Graphs of the evolution of our code are presented along with this file. Loss decreases over epochs and and accuracy raises. 
+(until a minimum is discovered by the optimization function)
+
+We did not have enough time to try different architectures, but there is still room for improvement, since there are other
+activation functions we can provide for each layer (or even input) and different combinations of those (probably using a 
+simple sigmoid function for HNR feature and combining on the second layer with results from MFCC feature processing on the layer
+could provide some interesting results)
+
+Using SVM instead of using a NN provided worse results in general (50% for the MFCC features alone). Even though it's an 
+arquitecture that's less prone to overfitting, if we could find a set of features that could more clearly distinguish between
+Cold and Not Cold, it could prove less resource intensive than a NN and maybe even better results.
+
+We chose not to use openSmile feature extraction due to the fact that it applies extraction along the whole file, and there was
+no apparent way for us to segment the file into more useful parts, such as vowels. The lack of information regarding how to use
+openSmile feature extraction was also a big objection for us to use the tool. 
+
+There could also be room for improvement (especially regarding the SVM) if we had time to develop a DNN for feature selection
+(in order to determine which features are more relevant for the classificaion). 
