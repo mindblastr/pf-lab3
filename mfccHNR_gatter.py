@@ -59,3 +59,4 @@ def gather_dir(dirname,tp):
 #gather_dir(os.getcwd() + "/MFCC/train")
 gather_dir(os.getcwd(), "train")
 gather_dir(os.getcwd(), "dev")
+gather_dir(os.getcwd(), "test")

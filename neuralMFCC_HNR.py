@@ -209,14 +209,27 @@ def display_train_history(history):
     
     plt.show()    # Display Plot
 
+def print_predictions(predicted_labels,keysFile,output):
+    i = 0
+    with open(output,'w') as out:
+        with open(keysFile,'r') as keysf:
+            for key in keysf:
+                result = int(predicted_labels[i])
+                key1 = key.split(" ")
+                keyStr = key1[0].strip("\n")
+                out.write(keyStr + " " + str(result))
+                out.write('\n')
+                i+=1
+
 def main():
     
     # Set file tuples
     train_files = ('train_converted.csv', 'labels_train.txt')
     dev_files = ('dev_converted.csv', 'labels_dev.txt')
-    
+    test_file = 'test_converted.csv'
     ## Load Data using Parsers
     
+    test_data = parse_data(test_file)
     # Training Data
         
     train_data = parse_data(train_files[0])
@@ -241,9 +254,18 @@ def main():
     # Get metrics for the development set
     loss, f1, predicted_labels = test_model(dev_data, dev_labels, model)
     
+
     print("Loss:", loss)
     print("UAR:", f1[1])
-    
+
+    rounded_labels = np.clip(np.abs(np.round(predicted_labels)), 0, 1)
+    print_predictions(rounded_labels,"key_dev.txt","dev.results.txt")
+
+    predicted_tests = model.predict(test_data)
+
+    rounded_tests = np.clip(np.abs(np.round(predicted_tests)), 0, 1)
+    print_predictions(rounded_tests,"key_test.txt","tests.results.txt")
+
     return
     
 if __name__ == "__main__":
